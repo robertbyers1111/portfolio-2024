@@ -4,7 +4,7 @@
 ---
 ## speedtest
 
-A Python script to spawn an instance of Ookla's speedtest CLI utility. Results are appended to an external file in JSON format.
+A Python project to assist in identifying weak signals in different rooms of a house. A timeseries data set is maintained in JSON format. Ookla's speedtest CLI utility is spawned, with results appended to the JSON file. The data is then plotted as a timeseries (bandwidth and total throughput, both upload and download) using matplotlib.
 
 Features of note
 - Nested JSON modeling with Pydantic
