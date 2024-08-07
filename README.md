@@ -1,8 +1,8 @@
 # Robert Byers
-Linkedin: https://www.linkedin.com/in/bobbyers2018/
-Github: https://github.com/robertbyers1111/portfolio-2024.git
+- Linkedin: https://www.linkedin.com/in/bobbyers2018/
+- Github: https://github.com/robertbyers1111/portfolio-2024.git
 ---
-# speedtest
+## speedtest
 
 A Python script to spawn an instance of Ookla's speedtest CLI utility. Results are appended to an external file in JSON format.
 
