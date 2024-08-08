@@ -26,7 +26,7 @@ Features of note
 
 - Supports both SQLite and PostgreSQL databases
 ---
-### [tides](https://github.com/robertbyers1111/portfolio-2024/tree/main/tids)
+### [tides](https://github.com/robertbyers1111/portfolio-2024/tree/main/tides)
 
 A selenium-based application to navigate to a tide schedule site and retrieve the tide schedule for a particular location
 
