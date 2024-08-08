@@ -20,4 +20,4 @@ A multi-user note-taking app written in Python with an interactive interface and
 Features of note
 - FastAPI
 - sqlalchemy
-- Supports both SQLite and Postgesql databases
+- Supports both SQLite and PostgreSQL databases
