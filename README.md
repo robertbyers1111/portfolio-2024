@@ -29,4 +29,11 @@ A selenium-based application to navigate to a tide schedule site and retrieve th
 Features of note
 - Selenium
 - pytest
+- XPATH
+- JSON
+- argparse
+- Generator functions
+- Regular expressions (advanced)
+
+
 

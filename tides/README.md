@@ -1,28 +1,23 @@
 
 ## Robert Byers
 ### QA Automation Engineer, SDET, Test Automation
-
 ------------
 
-Note: (Aug. 2022) This portfolio is a work-in-progress. Appologies if it seems minimal at this time. I am working dilligently to get additional quality work uploaded in a timely fashion!
+### tidesapp
 
-------------
+tidesapp is an application that used Selenium to drive a browser to high tide data for a number of locations and reports the results to the user. Selenium was choses over a RESTful solution because this project is a demo of browser automation. See the *notes* app for a REST application.
 
-#### [tidesapp](https://github.com/robertbyers1111/portfolio/tree/master/tides)
+Features of note
 
-tidesapp is an application that gathers high tide data for a number of locations and reports the results to the user. This is a new app I started on 8/23/2022. My intention is that it will grow over the next days or weeks to encompass some additional features. These are some of the skills this app highlights..
-
-- Test design and implementation
-- Python
-- pytest
 - Selenium
-- XPATH (Finding and interracting with DOM elements using XPATH)
-- JSON parsing
-- Command line parsing with *argparse*
+- pytest
+- XPATH
+- JSON
+- argparse
 - Regular expressions (advanced)
-- Generator (yield) functions
+- Generator functions
 
-The app itself should run from most any system with python, selenium and the Chrome webdriver. There are some OS-specific (linux) operations that require running the app's test suite in a linux environment (*todo: remove this limitation!*).
+This app has been tested in a linux environment.
 
 I selected tideschart.com for retrieving tide data. It supports retrieval of weekly tide data for most US beaches via a simple URL formulation. For example, to retrieve the current week's tide data for Newburyport, MA, navigating a browser to the following URL is sufficient..
 
@@ -46,4 +41,5 @@ The source code for the app itself is in the tides/tidesapp folder. The code for
 | tides/tests  | tests_datetime_utils.py  | pytest unit testing for the datetime utilities  |
 | tides/tests  | sample_input.json  | Persistent test input  |
 | tides  | setup.cfg  | Sets *pythonpath*, etc.  |
+
 
