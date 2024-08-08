@@ -21,3 +21,12 @@ Features of note
 - FastAPI
 - sqlalchemy
 - Supports both SQLite and PostgreSQL databases
+---
+### tides
+
+A selenium-based application to navigate to a tide schedule site and retrieve the tide schedule for a particular location
+
+Features of note
+- Selenium
+- pytest
+
