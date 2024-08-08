@@ -24,12 +24,14 @@ from typing import List
 from pydantic import ValidationError
 from loggingrmb import LoggingRmb
 import matplotlib.patches as patches
+import plotly.express as px
 
 logger = LoggingRmb(name='plot-mbps', console_level=logging.INFO).setup()
 
 
 input_json_file = "speedtest.json"
 output_png_file = "speedtest.png"
+plotly_output = "show"  # set to an image filename, or to "show" for an interactive plot
 
 
 def read_jsonl_file(file_path: str) -> List[MainObject]:
@@ -64,12 +66,19 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
     df_prep = []
     for data_object in data_objects:
+
+        # Don't display zero-valued data
+        download_mbps = data_object.download.mbps if data_object.download.mbps > 0. else float('nan')
+        upload_mbps = data_object.upload.mbps if data_object.upload.mbps > 0. else float('nan')
+        download_bandwidth_mbytesec = data_object.download.bw_mbytesec if data_object.download.bw_mbytesec > 0. else float('nan')
+        upload_bandwidth_mbytesec = data_object.upload.bw_mbytesec if data_object.upload.bw_mbytesec > 0. else float('nan')
+        
         df_prep.append({
             "timestamp": data_object.timestamp_,
-            "download_mbps": data_object.download.mbps,
-            "upload_mbps": data_object.upload.mbps,
-            "download_bandwidth_mbytesec": data_object.download.bw_mbytesec,
-            "upload_bandwidth_mbytesec": data_object.upload.bw_mbytesec,
+            "download_mbps": download_mbps,
+            "upload_mbps": upload_mbps,
+            "download_bandwidth_mbytesec": download_bandwidth_mbytesec,
+            "upload_bandwidth_mbytesec": upload_bandwidth_mbytesec,
         })
 
     df = pd.DataFrame(df_prep)
@@ -118,12 +127,21 @@ def generate_plot(df: DataFrame, plotfile: str, callouts: List = None) -> None:
     plt.savefig(plotfile)
 
 
+def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
+    fig = px.line(df, y=['download_mbps', 'upload_mbps'])
+    fig.show() if plotfile == "show" else fig.write_image(plotfile)
+
+
 if __name__ == "__main__":
+
     speedtest_data = read_jsonl_file(input_json_file)
     speedtest_dataframe = create_dataframe(speedtest_data)
+
     generate_plot(speedtest_dataframe, output_png_file, [
         (40, 'to fam room'),
         (69, 'to fam room'),
         (135, 'to fam room'),
         (213, 'to fam room')
     ])
+
+    generate_plotly_plot(speedtest_dataframe, plotly_output)
