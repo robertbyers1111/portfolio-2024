@@ -1,0 +1,14 @@
+aiofiles
+alembic
+bcrypt==4.0.1
+fastapi
+jinja2
+passlib
+psycopg2-binary
+pydantic
+pytest
+pytest-asyncio
+python-jose[cryptography]
+python-multipart
+sqlalchemy
+starlette
