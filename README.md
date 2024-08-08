@@ -4,7 +4,7 @@
 
 - Github: https://github.com/robertbyers1111/portfolio-2024
 ---
-### speedtest
+### [speedtest](https://github.com/robertbyers1111/portfolio-2024/tree/main/speedtest)
 
 A Python project to assist in identifying weak signals in different rooms of a house. A timeseries data set is maintained in JSON format. Ookla's speedtest CLI utility is spawned, with results appended to the JSON file. The data is then plotted as a timeseries (bandwidth and total throughput, both upload and download) using both matplotlib and plotly.
 
@@ -16,7 +16,7 @@ Features of note
 
 ---
 
-### notes app
+### [notes app](https://github.com/robertbyers1111/portfolio-2024/tree/main/notes)
 
 A multi-user note-taking app written in Python with an interactive interface and persistent database.
 
@@ -26,7 +26,7 @@ Features of note
 
 - Supports both SQLite and PostgreSQL databases
 ---
-### tides
+### [tides](https://github.com/robertbyers1111/portfolio-2024/tree/main/tids)
 
 A selenium-based application to navigate to a tide schedule site and retrieve the tide schedule for a particular location
 
