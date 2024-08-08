@@ -7,3 +7,4 @@ Features of note
 - sqlalchemy
 - Tested with both SQLite and PostgreSQL databases
 
+*note: the css, javascript and authentication modules are not my code*
