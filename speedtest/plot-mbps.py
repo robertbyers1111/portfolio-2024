@@ -75,6 +75,8 @@ def create_dataframe(data_objects: List) -> DataFrame:
         
         df_prep.append({
             "timestamp": data_object.timestamp_,
+            "date": data_object.timestamp_.date(),
+            "time": data_object.timestamp_.time(),
             "download_mbps": download_mbps,
             "upload_mbps": upload_mbps,
             "download_bandwidth_mbytesec": download_bandwidth_mbytesec,
