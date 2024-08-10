@@ -72,7 +72,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
         upload_mbps = data_object.upload.mbps if data_object.upload.mbps > 0. else float('nan')
         download_bandwidth_mbytesec = data_object.download.bw_mbytesec if data_object.download.bw_mbytesec > 0. else float('nan')
         upload_bandwidth_mbytesec = data_object.upload.bw_mbytesec if data_object.upload.bw_mbytesec > 0. else float('nan')
-        
+
         df_prep.append({
             "timestamp": data_object.timestamp_,
             "date": data_object.timestamp_.date(),
@@ -85,10 +85,23 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
     df = pd.DataFrame(df_prep)
 
+    # Create a new column for time of day to use as x-axis
+    df['time_of_day'] = df['timestamp'].dt.time
+
+    # Melt the DataFrame to have a single 'speed' column and a 'type' column (download/upload)
+    df_melted = df.melt(id_vars=['date', 'time_of_day'], value_vars=['download_mbps', 'upload_mbps'],
+                        var_name='type', value_name='speed')
+
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):
         logger.info(df)
 
-    return df
+    fig = px.line(df_melted, x='time_of_day', y='speed', color='date', line_dash='type',
+                  labels={'speed': 'Speed (Mbps)', 'time_of_day': 'Time of Day'},
+                  title='Upload and Download Speeds by Day')
+
+    fig.show()
+
+    return df_melted
 
 
 def do_callouts(df, ax, callouts):
@@ -130,7 +143,12 @@ def generate_plot(df: DataFrame, plotfile: str, callouts: List = None) -> None:
 
 
 def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
-    fig = px.line(df, y=['download_mbps', 'upload_mbps'])
+
+    # Plot with Plotly Express, color by 'date' and line type by 'type'
+    fig = px.line(df, x='time_of_day', y='speed', color='date', line_dash='type',
+                  labels={'speed': 'Speed (Mbps)', 'time_of_day': 'Time of Day'},
+                  title='Upload and Download Speeds by Day')
+
     fig.show() if plotfile == "show" else fig.write_image(plotfile)
 
 
@@ -139,11 +157,11 @@ if __name__ == "__main__":
     speedtest_data = read_jsonl_file(input_json_file)
     speedtest_dataframe = create_dataframe(speedtest_data)
 
-    generate_plot(speedtest_dataframe, output_png_file, [
-        (40, 'to fam room'),
-        (69, 'to fam room'),
-        (135, 'to fam room'),
-        (213, 'to fam room')
-    ])
+    # generate_plot(speedtest_dataframe, output_png_file, [
+    #     (40, 'to fam room'),
+    #     (69, 'to fam room'),
+    #     (135, 'to fam room'),
+    #     (213, 'to fam room')
+    # ])
 
-    generate_plotly_plot(speedtest_dataframe, plotly_output)
+    # generate_plotly_plot(speedtest_dataframe, plotly_output)
