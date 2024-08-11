@@ -2,6 +2,10 @@
 """
 plot-mbps.py
 
+
+
+
+
 A matplotlib-based application to plot timeseries data collected from the Oookla speedtest CLI. Input is in JSON, with
 data validation and data modeling performed with Pydantic (see model.py). Output is in the form of a plot saved to a
 graphics file.
@@ -85,7 +89,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
     df = pd.DataFrame(df_prep)
 
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 200):
         logger.info(df)
 
     return df
