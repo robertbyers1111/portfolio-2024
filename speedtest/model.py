@@ -31,7 +31,7 @@ class DownloadObject(BaseModel):
     bandwidth: int = Field(ge=0)
     bytes: int = Field(ge=0)
     elapsed: int = Field(gt=0)
-    latency: LatencyObject
+    latency: LatencyObject = Field(default=None)
 
     @computed_field
     @property
@@ -48,7 +48,7 @@ class UploadObject(BaseModel):
     bandwidth: int = Field(ge=0)
     bytes: int = Field(ge=0)
     elapsed: int = Field(gt=0)
-    latency: LatencyObject
+    latency: LatencyObject = Field(default=None)
 
     @computed_field
     @property
@@ -94,7 +94,7 @@ class MainObject(BaseModel):
     ping: PingObject
     download: DownloadObject
     upload: UploadObject
-    packetLoss: float
+    packetLoss: float = Field(default=None)
     isp: str
     interface: InterfaceObject
     server: ServerObject
