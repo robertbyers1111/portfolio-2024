@@ -2,15 +2,11 @@
 """
 plot-mbps.py
 
+A plotly application to plot timeseries data collected from the Oookla speedtest CLI. Input is in JSON, with data
+validation and data modeling performed with Pydantic (see model.py). Output is opened in an interactive plotly chart or
+saved to an image file (see variable 'plotly_output').
 
-
-
-
-A matplotlib-based application to plot timeseries data collected from the Oookla speedtest CLI. Input is in JSON, with
-data validation and data modeling performed with Pydantic (see model.py). Output is in the form of a plot saved to a
-graphics file.
-
-The impetus of this program is to assist in identifying weak wifi signal strength in various locations of a building.
+The impetus of this program is to assist in identifying weak Wi-Fi signal strength in various locations of a building.
 Annotations of the data are supported and allow calling-out of notable changes in throughput as the base system (a
 laptop) is moved to different areas of the building.
 
@@ -30,12 +26,12 @@ from loggingrmb import LoggingRmb
 import matplotlib.patches as patches
 import plotly.express as px
 
-logger = LoggingRmb(name='plot-mbps', console_level=logging.INFO).setup()
+logger = LoggingRmb(name='log_plot-mbps', console_level=logging.INFO).setup()
 
 
 input_json_file = "speedtest.json"
 output_png_file = "speedtest.png"
-plotly_output = "show"  # set to an image filename, or to "show" for an interactive plot
+plotly_output = "show"  # An image filename, or "show" for an interactive plot
 
 
 def read_jsonl_file(file_path: str) -> List[MainObject]:
