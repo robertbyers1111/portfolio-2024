@@ -30,18 +30,19 @@ class LoggingRmb(BaseModel):
                  '[%(asctime)s %(filename)-16.16s:%(lineno)-3.3s %(levelname)-5.5s] %(message)s',
                  datefmt='%Y-%m%d-%H:%M:%S')
         c_handler.setFormatter(c_formatter)
-        logger_rmb.addHandler(c_handler)
 
         f_handler = logging.FileHandler(f'{self.name}.log', mode='w')  # (default mode is 'a')
         f_formatter = logging.Formatter(
                  '[%(asctime)s %(filename)-16.16s:%(lineno)-3.3s %(levelname)-5.5s] %(message)s',
                  datefmt='%Y-%m%d-%H:%M:%S')
         f_handler.setFormatter(f_formatter)
-        logger_rmb.addHandler(f_handler)
+
+        if len(logger_rmb.handlers) == 0:
+            logger_rmb.addHandler(c_handler)
+            logger_rmb.addHandler(f_handler)
 
         logging.getLogger().setLevel(logging.DEBUG)
         c_handler.setLevel(self.console_level)
         f_handler.setLevel(self.file_level)
 
         return logger_rmb
-
