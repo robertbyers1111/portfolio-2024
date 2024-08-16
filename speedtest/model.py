@@ -41,7 +41,7 @@ class DownloadObject(BaseModel):
     @computed_field
     @property
     def mbps(self) -> float:
-        return (self.bytes * 8) / (self.elapsed / 1000.0) / 1000000.0  # elapsed is constrained to strictly > 0
+        return (self.bytes * 8) / (self.elapsed / 1000.0) / 1000000.0  # elapsed is already constrained to strictly > 0, hence no worry about zero division
 
 
 class UploadObject(BaseModel):
@@ -58,7 +58,7 @@ class UploadObject(BaseModel):
     @computed_field
     @property
     def mbps(self) -> float:
-        return (self.bytes * 8) / (self.elapsed / 1000.0) / 1000000.0  # elapsed is constrained to strictly > 0
+        return (self.bytes * 8) / (self.elapsed / 1000.0) / 1000000.0  # elapsed is already constrained to strictly > 0, hence no worry about zero division
 
 
 class InterfaceObject(BaseModel):
