@@ -1,7 +1,7 @@
 """
 model.py
 
-Pydantic-based model of the speedtest time series JSON input (which includes nested JSON objects)
+Pydantic-based model of the speedtest time series JSON input (which includes nested JSON objects). Source of the input is Ookla's CLI app with output set to JSON.
 """
 
 import logging
