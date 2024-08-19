@@ -6,11 +6,8 @@ A module for instantiating a logging object with my preferred configuration.
 
 import logging
 import os
-import subprocess as sp
-import typing
-from subprocess import CalledProcessError
-from datetime import datetime
-from time import sleep
+import re
+import sys
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -31,7 +28,9 @@ class LoggingRmb(BaseModel):
                  datefmt='%Y-%m%d-%H:%M:%S')
         c_handler.setFormatter(c_formatter)
 
-        f_handler = logging.FileHandler(f'{self.name}.log', mode='w')  # (default mode is 'a')
+        exe_file = os.path.basename(sys.argv[0])
+        exe_base = re.sub(r'\.py$', '', exe_file)
+        f_handler = logging.FileHandler(f'{exe_base}.log', mode='w')  # (default mode is 'a')
         f_formatter = logging.Formatter(
                  '[%(asctime)s %(filename)-16.16s:%(lineno)-3.3s %(levelname)-5.5s] %(message)s',
                  datefmt='%Y-%m%d-%H:%M:%S')
