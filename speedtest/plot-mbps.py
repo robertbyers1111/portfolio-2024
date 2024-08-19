@@ -24,7 +24,7 @@ from pydantic import ValidationError
 from loggingrmb import LoggingRmb
 import plotly.express as px
 
-logger = LoggingRmb(name='log_plot-mbps', console_level=logging.INFO).setup()
+logger = LoggingRmb(console_level=logging.INFO).setup()
 
 
 input_json_file = "speedtest-example.json"
@@ -44,18 +44,20 @@ def read_jsonl_file(file_path: str) -> List[MainObject]:
                 obj = MainObject(**json_data)
                 data.append(obj)
             except json.JSONDecodeError as e:
-                logger.warning(f"Line {line_num}: JSON decode error: {e}")
+                logger.debug(f"Line {line_num}: JSON decode error: {e}")
                 continue
             except ValidationError as e:
-                logger.warning(f"Line {line_num}: Validation error: {e}")
+                logger.debug(f"Line {line_num}: Validation error: {e}")
                 continue
             except Exception as e:
-                logger.warning(f"Line {line_num}: Error: {e}")
+                logger.debug(f"Line {line_num}: Error: {e}")
                 continue
             lines_read += 1
 
     logger.info(f"Lines input: {line_num}")
     logger.info(f"Lines processed: {lines_read}")
+    if line_num != lines_read:
+        logger.info('(see log file for JSON, validation and other input errors)')
 
     return data
 
@@ -84,7 +86,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
     df = pd.DataFrame(df_prep)
 
     with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 200):
-        logger.info(df)
+        logger.debug(df)
 
     return df
 
