@@ -2,7 +2,7 @@
 """
 plot-mbps.py
 
-A plotly application to plot timeseries data collected from the Oookla speedtest CLI. Input is in JSON, with data
+A plotly application to plot timeseries data collected from the Ookla speedtest CLI. Input is in JSON, with data
 validation and data modeling performed with Pydantic (see model.py). Output is opened in an interactive plotly chart or
 saved to an image file (see variable 'plotly_output').
 
@@ -16,20 +16,18 @@ parameters (in favor of using appropriately descriptive method and parameter nam
 
 import json
 import logging
-import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.core.frame import DataFrame
 from model import MainObject
 from typing import List
 from pydantic import ValidationError
 from loggingrmb import LoggingRmb
-import matplotlib.patches as patches
 import plotly.express as px
 
-logger = LoggingRmb(name='log_plot-mbps', console_level=logging.INFO).setup()
+logger = LoggingRmb(console_level=logging.INFO).setup()
 
 
-input_json_file = "speedtest.json"
+input_json_file = "speedtest-example.json"
 output_png_file = "speedtest.png"
 plotly_output = "show"  # An image filename, or "show" for an interactive plot
 
@@ -46,18 +44,20 @@ def read_jsonl_file(file_path: str) -> List[MainObject]:
                 obj = MainObject(**json_data)
                 data.append(obj)
             except json.JSONDecodeError as e:
-                logger.warning(f"Line {line_num}: JSON decode error: {e}")
+                logger.debug(f"Line {line_num}: JSON decode error: {e}")
                 continue
             except ValidationError as e:
-                logger.warning(f"Line {line_num}: Validation error: {e}")
+                logger.debug(f"Line {line_num}: Validation error: {e}")
                 continue
             except Exception as e:
-                logger.warning(f"Line {line_num}: Error: {e}")
+                logger.debug(f"Line {line_num}: Error: {e}")
                 continue
             lines_read += 1
 
     logger.info(f"Lines input: {line_num}")
     logger.info(f"Lines processed: {lines_read}")
+    if line_num != lines_read:
+        logger.info('(see log file for JSON, validation and other input errors)')
 
     return data
 
@@ -86,51 +86,13 @@ def create_dataframe(data_objects: List) -> DataFrame:
     df = pd.DataFrame(df_prep)
 
     with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 200):
-        logger.info(df)
+        logger.debug(df)
 
     return df
 
 
-def do_callouts(df, ax, callouts):
-
-    if callouts is not None:
-        callout: object
-        for callout in callouts:
-            idx, text_value = callout
-            annotate_date = df.index[idx]  # Choose a date to annotate
-            ax.annotate(text_value,
-                        xy=(annotate_date, df.loc[annotate_date, 'download_mbps']),
-                        xytext=(annotate_date - pd.Timedelta(hours=8), df.loc[annotate_date, 'download_mbps'] - 100),
-                        arrowprops=dict(facecolor='black', shrink=0.05),
-                        )
-
-
-def generate_plot(df: DataFrame, plotfile: str, callouts: List = None) -> None:
-
-    df.set_index('timestamp', inplace=True)
-    fig, ax1 = plt.subplots(figsize=(16, 9))
-    ax2 = ax1.twinx()
-    df[['download_mbps', 'upload_mbps']].plot(ax=ax1)
-    df[['download_bandwidth_mbytesec', 'upload_bandwidth_mbytesec']].plot(ax=ax2, color=['red', 'green'], style='--')
-    do_callouts(df, ax1, callouts)
-    ax1.set_ylabel("Throughput (Mbps)")
-    ax2.set_ylabel("Bandwidth (MBytes/sec)")
-    ax1.legend_.remove()
-    ax2.legend_.remove()
-    ax1.set_facecolor('lightcyan')
-    plt.title("Ookla Speedtest")
-    plt.grid(True)
-    fig.legend(loc='lower center', ncol=3)
-    fig.set_facecolor('paleturquoise')
-    fig.patch.set_linewidth(4)
-    rect = patches.Rectangle((0, 0), 1, 1, linewidth=4, edgecolor='black', facecolor='none', transform=fig.transFigure)
-    fig.patches.append(rect)
-
-    plt.savefig(plotfile)
-
-
 def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
-    fig = px.line(df, y=['download_mbps', 'upload_mbps'])
+    fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'])
     fig.show() if plotfile == "show" else fig.write_image(plotfile)
 
 
@@ -138,12 +100,4 @@ if __name__ == "__main__":
 
     speedtest_data = read_jsonl_file(input_json_file)
     speedtest_dataframe = create_dataframe(speedtest_data)
-
-    generate_plot(speedtest_dataframe, output_png_file, [
-        (40, 'to fam room'),
-        (69, 'to fam room'),
-        (135, 'to fam room'),
-        (213, 'to fam room')
-    ])
-
     generate_plotly_plot(speedtest_dataframe, plotly_output)
