@@ -81,6 +81,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
             "upload_mbps": upload_mbps,
             "download_bandwidth_mbytesec": download_bandwidth_mbytesec,
             "upload_bandwidth_mbytesec": upload_bandwidth_mbytesec,
+            "address": data_object.address.address,
         })
 
     df = pd.DataFrame(df_prep)
@@ -92,7 +93,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
 
 def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
-    fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'])
+    fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
     fig.show() if plotfile == "show" else fig.write_image(plotfile)
 
 
