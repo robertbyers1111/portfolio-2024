@@ -94,7 +94,15 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
 def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
     fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
+
+    # print(fig['data'])
+
+    # Force all upload_mpbs lines to be a different color. Hence only download_mbps will have colors from the call to px.line
+    for i in range(1, len(fig['data']), 2):
+        fig['data'][i].line.color = 'gray'
+
     fig.show() if plotfile == "show" else fig.write_image(plotfile)
+    ...
 
 
 if __name__ == "__main__":

@@ -86,8 +86,8 @@ class AddressObject(BaseModel):
     """
     Optional JSON object (not part of ookla's output) which identifies a house and room from which the measurement was taken
     """
-    address: str = Field(max_length=32)
-    room: str = Field(max_length=32)
+    address: str = Field(max_length=32, default="")
+    room: str = Field(max_length=32, default="")
 
 
 class MainObject(BaseModel):
@@ -104,7 +104,7 @@ class MainObject(BaseModel):
     interface: InterfaceObject
     server: ServerObject
     result: ResultObject
-    address: AddressObject = Field(default=None)
+    address: AddressObject
 
     @computed_field
     @property
