@@ -95,19 +95,48 @@ def create_dataframe(data_objects: List) -> DataFrame:
     return df
 
 
+def customize_legend(figure):
+    figure.update_layout(
+        legend=dict(
+            traceorder="reversed",
+            title_font_family="Arial",
+            indentation=25,
+            font=dict(
+                family="Arial",
+                size=12,
+                color="black"
+            ),
+            bgcolor="LightSteelBlue",
+            bordercolor="Black",
+            borderwidth=2
+        )
+    )
+
+
+def customize_axes(figure):
+    figure.update_xaxes(title_text=None)
+    figure.update_yaxes(title_text='Speed (Mbps)')
+
+
+def customize_upload_line_color(figure):
+    """
+    Force all upload_mpbs lines to be their own color, leaving only download_mbps line colors to be unique
+    """
+    for i in range(1, len(figure['data']), 2):
+        figure['data'][i].line.color = 'gray'
+
+
 @app.callback(
     Output(component_id='graph', component_property='figure'),
     Input(component_id='addresses_checklist', component_property='value'),
     prevent_initial_call=True
 )
 def update_graph(enabled_addresses):
-    print(f'{enabled_addresses:}')
     df_update = speedtest_dataframe[speedtest_dataframe['address'].isin(enabled_addresses)]
-    fig_update = px.line(df_update, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
-    fig_update.update_xaxes(title_text=None)
-    fig_update.update_yaxes(title_text='Speed (Mbps)')
-    for i in range(1, len(fig_update['data']), 2):
-        fig_update['data'][i].line.color = 'gray'
+    fig_update = px.line(df_update, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address', labels={'address': 'Address/Room'})
+    customize_legend(fig_update)
+    customize_axes(fig_update)
+    customize_upload_line_color(fig_update)
     return fig_update
 
 
@@ -116,19 +145,16 @@ if __name__ == "__main__":
     speedtest_data = read_jsonl_file(input_json_file)
     speedtest_dataframe = create_dataframe(speedtest_data)
 
-    fig = px.line(speedtest_dataframe, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
-    fig.update_xaxes(title_text=None)
-    fig.update_yaxes(title_text='Speed (Mbps)')
-
-    # Force all upload_mpbs lines to be their own color, leaving only download_mbps line colors to be unique
-    for i in range(1, len(fig['data']), 2):
-        fig['data'][i].line.color = 'gray'
+    fig = px.line(speedtest_dataframe, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address', labels={'address': 'Address/Room'})
+    customize_legend(fig)
+    customize_axes(fig)
+    customize_upload_line_color(fig)
 
     # List of unique addresses in the dataframe (for the Dash checklist)
     addresses = sorted(list(set(speedtest_dataframe['address'])))
 
     app.layout = html.Div([
-        html.Div(id="dash-title", children="Speedtest Results"),
+        html.H1(id="dash-title", children="Speedtest Results"),
         html.Hr(),
         dcc.Checklist(addresses, addresses, id='addresses_checklist'),
         html.Hr(),
