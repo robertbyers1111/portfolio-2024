@@ -81,7 +81,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
             "upload_mbps": upload_mbps,
             "download_bandwidth_mbytesec": download_bandwidth_mbytesec,
             "upload_bandwidth_mbytesec": upload_bandwidth_mbytesec,
-            "address": data_object.address.address,
+            "address": f'{data_object.address.address}_{data_object.address.room}'
         })
 
     df = pd.DataFrame(df_prep)
