@@ -23,6 +23,9 @@ from typing import List
 from pydantic import ValidationError
 from loggingrmb import LoggingRmb
 import plotly.express as px
+from dash import Dash, Input, Output, dcc, html
+
+app = Dash(__name__)
 
 logger = LoggingRmb(console_level=logging.INFO).setup()
 
@@ -92,21 +95,44 @@ def create_dataframe(data_objects: List) -> DataFrame:
     return df
 
 
-def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
-    fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
-
-    # print(fig['data'])
-
-    # Force all upload_mpbs lines to be a different color. Hence only download_mbps will have colors from the call to px.line
-    for i in range(1, len(fig['data']), 2):
-        fig['data'][i].line.color = 'gray'
-
-    fig.show() if plotfile == "show" else fig.write_image(plotfile)
-    ...
+@app.callback(
+    Output(component_id='graph', component_property='figure'),
+    Input(component_id='addresses_checklist', component_property='value'),
+    prevent_initial_call=True
+)
+def update_graph(enabled_addresses):
+    print(f'{enabled_addresses:}')
+    df_update = speedtest_dataframe[speedtest_dataframe['address'].isin(enabled_addresses)]
+    fig_update = px.line(df_update, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
+    fig_update.update_xaxes(title_text=None)
+    fig_update.update_yaxes(title_text='Speed (Mbps)')
+    for i in range(1, len(fig_update['data']), 2):
+        fig_update['data'][i].line.color = 'gray'
+    return fig_update
 
 
 if __name__ == "__main__":
 
     speedtest_data = read_jsonl_file(input_json_file)
     speedtest_dataframe = create_dataframe(speedtest_data)
-    generate_plotly_plot(speedtest_dataframe, plotly_output)
+
+    fig = px.line(speedtest_dataframe, x='timestamp', y=['download_mbps', 'upload_mbps'], color='address')
+    fig.update_xaxes(title_text=None)
+    fig.update_yaxes(title_text='Speed (Mbps)')
+
+    # Force all upload_mpbs lines to be their own color, leaving only download_mbps line colors to be unique
+    for i in range(1, len(fig['data']), 2):
+        fig['data'][i].line.color = 'gray'
+
+    # List of unique addresses in the dataframe (for the Dash checklist)
+    addresses = sorted(list(set(speedtest_dataframe['address'])))
+
+    app.layout = html.Div([
+        html.Div(id="dash-title", children="Speedtest Results"),
+        html.Hr(),
+        dcc.Checklist(addresses, addresses, id='addresses_checklist'),
+        html.Hr(),
+        dcc.Graph(id="graph", figure=fig)
+    ])
+
+    app.run(debug=True)
