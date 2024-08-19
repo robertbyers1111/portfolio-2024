@@ -10,9 +10,6 @@ from pydantic import BaseModel, Field, computed_field, ValidationError, HttpUrl
 from loggingrmb import LoggingRmb
 
 
-logger = LoggingRmb(name='model', console_level=logging.INFO).setup()
-
-
 class LatencyObject(BaseModel):
     iqm: float
     low: float
