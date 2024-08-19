@@ -90,7 +90,7 @@ def create_dataframe(data_objects: List) -> DataFrame:
 
 
 def generate_plotly_plot(df: DataFrame, plotfile: str) -> None:
-    fig = px.line(df, y=['download_mbps', 'upload_mbps'])
+    fig = px.line(df, x='timestamp', y=['download_mbps', 'upload_mbps'])
     fig.show() if plotfile == "show" else fig.write_image(plotfile)
 
 
