@@ -27,7 +27,7 @@ import plotly.express as px
 logger = LoggingRmb(name='log_plot-mbps', console_level=logging.INFO).setup()
 
 
-input_json_file = "speedtest.json"
+input_json_file = "speedtest-example.json"
 output_png_file = "speedtest.png"
 plotly_output = "show"  # An image filename, or "show" for an interactive plot
 
