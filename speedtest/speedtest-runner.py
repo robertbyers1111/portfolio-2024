@@ -14,6 +14,9 @@ from datetime import datetime
 from json.decoder import JSONDecodeError
 from loggingrmb import LoggingRmb
 from subprocess import CalledProcessError
+from time import sleep
+
+ADDR_INFO = {'address': 'Lowell St', 'room': 'Kitchen'}
 
 home = os.environ.get("HOME")
 log_dir = f"{home}/var/log"
@@ -22,7 +25,6 @@ speedtest_exe = f"{bin_dir}/speedtest"
 output_basename = "speedtest.log"
 output_file = f"{log_dir}/{output_basename}"
 sleep_val = 15
-
 
 logger = LoggingRmb(name='speedtest', console_level=logging.INFO).setup()
 os.makedirs(log_dir, exist_ok=True)
@@ -42,6 +44,25 @@ def line_contains_error(line: str) -> bool:
     except JSONDecodeError:
         return False
     return True if 'error' in line_json.keys() else False
+
+
+def add_address_info(line: str) -> str:
+    """
+    Adds address info (in the form of an additional JSON object) to the end of a valid ookla cli output line
+    """
+    try:
+        line_json = json.loads(line)
+    except JSONDecodeError:
+        return line
+
+    # Must have all these keys. Otherwise, return the line unchanged.
+    for test in ['timestamp', 'upload', 'download', 'result']:
+        if test not in line_json.keys():
+            return line
+
+    line_json['address'] = ADDR_INFO
+    line_updated = json.dumps(line_json)
+    return line_updated
 
 
 def run_speedtest() -> None:
@@ -94,10 +115,11 @@ def run_speedtest() -> None:
             with open(output_file, "a") as f:
                 for line in proc.stdout.split('\n'):
                     if line.strip() != '':
-                        f.write(f"{line.strip()}\n")
-                        logger.debug(f"{line.strip()}")
+                        line_with_addrinfo = add_address_info(line)
+                        f.write(f"{line_with_addrinfo.strip()}\n")
+                        logger.debug(f"{line_with_addrinfo.strip()}")
                         num_lines += 1
-                        if line_contains_error(line):
+                        if line_contains_error(line_with_addrinfo):
                             try_again = True
 
             if num_lines == 0:
