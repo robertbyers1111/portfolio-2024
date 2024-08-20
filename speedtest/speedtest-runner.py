@@ -53,11 +53,13 @@ def add_address_info(line: str) -> str:
     try:
         line_json = json.loads(line)
     except JSONDecodeError:
+        logger.warning(f'JSON decode error: {line}')
         return line
 
     # Must have all these keys. Otherwise, return the line unchanged.
     for test in ['timestamp', 'upload', 'download', 'result']:
         if test not in line_json.keys():
+            logger.warning(f'{test} key not found in: {line}')
             return line
 
     line_json['address'] = ADDR_INFO
